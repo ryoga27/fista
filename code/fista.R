@@ -109,8 +109,7 @@ fista_lasso = function(
             nu = nu,
             beta = beta_mat[, iter_num + 1],
             coefficients = c(nu, beta_mat[, iter_num + 1]),
-            setup = setup,
-            process = process
+            setup = setup
         )
     }
 
