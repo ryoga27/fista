@@ -33,7 +33,10 @@ rescale_beta_mat = function(beta_mat, x_sd, iter_num){
     return(beta_mat)
 }
 
-fista_lasso = function(y, x, iter_max = 10000, eps = 0.001, lambda = 1, L = NA){
+fista_lasso = function(
+    y, x, iter_max = 10000, eps = 0.001, lambda = 1, L = NA,
+    process_save = TRUE
+){
 
     setup = list(
         y = y, x = x,
@@ -86,20 +89,31 @@ fista_lasso = function(y, x, iter_max = 10000, eps = 0.001, lambda = 1, L = NA){
     beta_mat = rescale_beta_mat(beta_mat, x_sd, iter_num)
     nu = y_mean - x_mean%*%beta_mat[, iter_num + 1]
 
-    process = list(
-        iter_num = iter_num,
-        beta_mat = beta_mat,
-        nu = nu,
-        obj = obj[1:(iter_num + 1)]
-    )
+    if(process_save == TRUE){
+        process = list(
+            iter_num = iter_num,
+            beta_mat = beta_mat,
+            nu = nu,
+            obj = obj[1:(iter_num + 1)]
+        )
+        result = list(
+            nu = nu,
+            beta = beta_mat[, iter_num + 1],
+            coefficients = c(nu, beta_mat[, iter_num + 1]),
+            setup = setup,
+            process = process
+        )
+    }
+    if(process_save == FALSE){
+        result = list(
+            nu = nu,
+            beta = beta_mat[, iter_num + 1],
+            coefficients = c(nu, beta_mat[, iter_num + 1]),
+            setup = setup,
+            process = process
+        )
+    }
 
-    result = list(
-        nu = nu,
-        beta = beta_mat[, iter_num + 1],
-        coefficients = c(nu, beta_mat[, iter_num + 1]),
-        setup = setup,
-        process = process
-    )
     return(result)
 }
 
